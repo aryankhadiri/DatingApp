@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { AccountService } from '../_services/account.service';
 
 @Component({
   selector: 'app-home',
@@ -8,14 +10,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
   registerMode = false;
-  constructor() { }
+  userLoggedIn = false;
+  constructor(private accountService:AccountService) { }
 
   ngOnInit(): void {
+   this.userExists();
   }
   registerToggle(){
     this.registerMode = !this.registerMode;
   }
  cancelRegisterMode(event:boolean){
   this.registerMode = event;
+ }
+ userExists(){
+  this.accountService.currentUser$.pipe(map(user=>{
+    if (user){
+      this.userLoggedIn=true;
+    }
+    else{
+      this.userLoggedIn=false;
+    }
+  })).subscribe();
  }
 }
